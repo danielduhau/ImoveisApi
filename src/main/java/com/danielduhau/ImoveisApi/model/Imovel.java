@@ -13,7 +13,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 public class Imovel {
 
     @Id
@@ -29,6 +28,13 @@ public class Imovel {
     private Long id;
     private String matricula;
     private String endereco;
+
+    public Imovel(String matricula, String endereco, String nomeProprietario) {
+        this.matricula = matricula;
+        this.endereco = endereco;
+        this.nomeProprietario = nomeProprietario;
+    }
+
     private String nomeProprietario;
 
     @Override
