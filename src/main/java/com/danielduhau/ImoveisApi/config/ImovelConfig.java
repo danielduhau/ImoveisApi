@@ -25,7 +25,7 @@ public class ImovelConfig {
             Imovel casa2 = new Imovel(
                     "23010393",
                     "Rua visconde de Porto Alegre,n.13",
-                    "Joao pereira da silva"
+                    "snoop dog"
             );
 
             Imovel casa3 = new Imovel(

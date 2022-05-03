@@ -28,14 +28,13 @@ public class Imovel {
     private Long id;
     private String matricula;
     private String endereco;
+    private String proprietario;
 
-    public Imovel(String matricula, String endereco, String nomeProprietario) {
+    public Imovel(String matricula, String endereco, String proprietario) {
         this.matricula = matricula;
         this.endereco = endereco;
-        this.nomeProprietario = nomeProprietario;
+        this.proprietario = proprietario;
     }
-
-    private String nomeProprietario;
 
     @Override
     public boolean equals(Object o) {
