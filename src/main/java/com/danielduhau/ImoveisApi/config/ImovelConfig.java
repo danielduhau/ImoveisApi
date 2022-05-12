@@ -1,11 +1,15 @@
 package com.danielduhau.ImoveisApi.config;
 
+import com.danielduhau.ImoveisApi.model.AppUser;
 import com.danielduhau.ImoveisApi.model.Imovel;
+import com.danielduhau.ImoveisApi.model.Role;
 import com.danielduhau.ImoveisApi.repository.ImovelRepository;
+import com.danielduhau.ImoveisApi.service.AppUserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -13,8 +17,17 @@ public class ImovelConfig {
 
     @Bean
     CommandLineRunner commandLineRunner (
-            ImovelRepository imovelRepository){
+            ImovelRepository imovelRepository, AppUserService appUserService){
         return args -> {
+
+            appUserService.saveRole( new Role(null, "ROLE_USER"));
+            appUserService.saveRole( new Role(null, "ROLE_ADMIN"));
+
+            appUserService.saveAppUser(new AppUser(null, "Maria Luzia", "luzia", "1234", new ArrayList<>()));
+            appUserService.saveAppUser(new AppUser(null, "Daniel Sampaio", "daniel.duhau@gmail.com", "1234", new ArrayList<>()));
+
+            appUserService.addRoleToAppUser("luzia", "ROLE_USER");
+            appUserService.addRoleToAppUser("daniel.duhau@gmail.com", "ROLE_ADMIN");
 
             Imovel casa1 = new Imovel(
                     "20310360",
