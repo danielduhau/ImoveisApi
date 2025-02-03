@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ImovelRepository extends JpaRepository<Imovel, Long> {
 
-    List<Imovel> findByProprietarioIgnoreCaseContaining(@Param("proprietario") String proprietario);
+    List<Imovel> findByProprietarioIgnoreCaseContaining(@Param("endereco") String proprietario);
 
     Optional<Imovel> findByMatricula(String matricula);
 

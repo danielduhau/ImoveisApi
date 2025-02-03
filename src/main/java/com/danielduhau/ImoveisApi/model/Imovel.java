@@ -13,27 +13,26 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@Builder
 public class Imovel {
 
     @Id
-    @SequenceGenerator(
-            name = "imovel_seq",
-            sequenceName = "imovel_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "imovel_seq"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String matricula;
-    private String endereco;
-    private String proprietario;
 
-    public Imovel(String matricula, String endereco, String proprietario) {
+    @Column(nullable = false, unique = true)
+    private String matricula;
+
+    @Column(nullable = false)
+    private String nomeProprietario;
+
+    @Column(nullable = false)
+    private String endereco;
+
+    public Imovel(String matricula, String endereco, String nomeProprietario) {
         this.matricula = matricula;
         this.endereco = endereco;
-        this.proprietario = proprietario;
+        this.nomeProprietario = nomeProprietario;
     }
 
     @Override

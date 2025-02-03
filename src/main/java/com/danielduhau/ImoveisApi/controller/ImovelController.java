@@ -43,7 +43,7 @@ public class ImovelController {
 		return ResponseEntity.notFound().build();
 	}
 
-    @GetMapping("/buscaProprietario/{proprietario}")
+    @GetMapping("/buscaProprietario/{endereco}")
     public List<Imovel> buscaPorProprietario(@PathVariable String proprietario){
         return imovelService.findByProprietario(proprietario);
     }
