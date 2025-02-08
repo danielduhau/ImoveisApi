@@ -1,3 +1,4 @@
+/*
 package com.danielduhau.ImoveisApi.filter;
 
 import com.auth0.jwt.JWT;
@@ -36,3 +37,4 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 }
+*/
