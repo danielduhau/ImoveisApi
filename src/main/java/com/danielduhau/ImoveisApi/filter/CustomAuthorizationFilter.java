@@ -29,7 +29,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final String jwtSecret;
+
+    public CustomAuthorizationFilter(String jwtSecret) {
+        this.jwtSecret = jwtSecret;
+    }
 
     private static final List<String> PUBLIC_ROUTES = List.of("/login", "/refresh", "/public/");
 
