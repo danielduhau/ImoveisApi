@@ -19,7 +19,7 @@ public class ImovelService {
     }
 
     public List<Imovel> findByProprietario(String nome){
-        return imovelRepository.findByProprietarioIgnoreCaseContaining(nome);
+        return imovelRepository.findByNomeProprietarioIgnoreCaseContaining(nome);
     }
 
     public void addNovoImovel(Imovel imovel) {

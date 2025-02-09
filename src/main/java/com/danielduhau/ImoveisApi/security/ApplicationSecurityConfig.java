@@ -1,74 +1,46 @@
 package com.danielduhau.ImoveisApi.security;
 
 import com.danielduhau.ImoveisApi.filter.CustomAuthenticationFilter;
+import com.danielduhau.ImoveisApi.filter.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 
-import static com.danielduhau.ImoveisApi.security.ApplicationUserRole.*;
-import static org.springframework.security.config.http.SessionCreationPolicy.*;
+@Configuration
+@RequiredArgsConstructor
+public class ApplicationSecurityConfig {
+    private final AuthenticationConfiguration authenticationConfiguration;
 
-@Configuration @EnableWebSecurity @RequiredArgsConstructor
-public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final PasswordEncoder passwordEncoder;
-    private final UserDetailsService userDetailsService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/", "index", "/css/*","/h2-console/**","/console/**", "/js/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/**").hasAnyAuthority("ROLE_USER")
-                .anyRequest()
-                .authenticated()
-                .and()
-                .httpBasic();
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager(), jwtSecret);
+        customAuthenticationFilter.setFilterProcessesUrl("/login");
 
         http.csrf().disable();
-        http.headers().frameOptions().disable();
-        http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.authorizeRequests()
+                .antMatchers("/login", "/refresh", "/public/**").permitAll()
+                .antMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/api/user/**").hasAuthority("ROLE_USER")
+                .anyRequest().authenticated();
 
+        http.addFilter(customAuthenticationFilter);
+        http.addFilterBefore(new CustomAuthorizationFilter(), CustomAuthenticationFilter.class);
+
+        return http.build();
     }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    /* @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-        UserDetails danielDuhau = User.builder()
-                .username("daniel.duhau@gmail.com")
-                .password(passwordEncoder.encode("123456"))
-                .roles(ESTUDANTE.name()) // ROLE_STUDENT
-                .build();
-
-        return new InMemoryUserDetailsManager(
-                danielDuhau
-        );
-
-    }
-*/
 }
